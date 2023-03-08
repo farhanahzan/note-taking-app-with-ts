@@ -2,17 +2,24 @@ import React,{useState, useMemo} from 'react';
 import { Link } from 'react-router-dom';
 import ReactSelect from 'react-select';
 import { Note, Tag } from '../App';
+import { EditTagModal } from './EditTagModal';
 import NoteCard from './NoteCard';
 
 type NoteListProps = {
   availableTags:Tag[]
   notes:Note[]
+  deleteTag:(id:string)=>void
+  updateTag:(id:string, label:string)=>void
 };
 
-export const NoteList = ({availableTags, notes}:NoteListProps) => {
+export const NoteList = ({availableTags, notes, deleteTag, updateTag}:NoteListProps) => {
   const [selectedTag, setSelectedTag] = useState<Tag[]>([]);
   const [title, setTitle] = useState("")
+  const [editTagModalIsOpen, setEditTagModalIsOpen] = useState(false)
 
+  const handleClose=()=>{
+    setEditTagModalIsOpen(prev=>false)
+  }
   const filteredNotes =useMemo(()=>{
     return notes.filter(note=>{
       return (
@@ -31,18 +38,18 @@ export const NoteList = ({availableTags, notes}:NoteListProps) => {
         <div className="flex flex-row justify-between items-start">
           <h1 className="text-2xl font-bold">Notes</h1>
           <div className="flex gap-2 ">
-
             <Link to={`/new`}>
+              <button
+                type="button"
+                className="bg-green-700 text-base font-medium text-white px-4 py-1 rounded-md hover:bg-green-900 shadow-lg "
+              >
+                Create
+              </button>
+            </Link>
             <button
               type="button"
-              className="bg-green-700 text-base font-medium text-white px-4 py-1 rounded-md hover:bg-blue-800 shadow-lg "
-              >
-              Create
-            </button>
-              </Link>
-            <button
-              type="submit"
-              className="bg-orange-700 text-base font-medium text-white px-4 py-1 rounded-md hover:bg-blue-800 shadow-lg "
+              onClick={()=>setEditTagModalIsOpen(true)}
+              className="bg-orange-700 text-base font-medium text-white px-4 py-1 rounded-md hover:bg-orange-900 shadow-lg "
             >
               Edit Tags
             </button>
@@ -65,7 +72,7 @@ export const NoteList = ({availableTags, notes}:NoteListProps) => {
                   required
                   placeholder="Search Title"
                   value={title}
-                  onChange={e=>setTitle(e.target.value)}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
               </div>
               <div>
@@ -96,15 +103,20 @@ export const NoteList = ({availableTags, notes}:NoteListProps) => {
               </div>
             </div>
           </form>
-          <div className='flex flex-wrap gap-3'>
-            {
-              filteredNotes.map(note=>(
-                <NoteCard key={note.id} id={note.id} title={note.title} tag={note.tags} />
-              ))
-            }
+          <div className="flex flex-wrap gap-3">
+            {filteredNotes.map((note) => (
+              <NoteCard
+                key={note.id}
+                id={note.id}
+                title={note.title}
+                tag={note.tags}
+              />
+            ))}
           </div>
         </div>
       </div>
+      <EditTagModal show={editTagModalIsOpen} handleClose={handleClose} availableTags={availableTags} deleteTag={deleteTag} updateTag={updateTag} />
     </>
   );
 };
+

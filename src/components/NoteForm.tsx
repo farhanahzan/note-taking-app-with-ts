@@ -86,7 +86,7 @@ export const NoteForm = ({ onSubmit, onAddTag, availableTags ,title, body, tags}
             htmlFor="body"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
-            Body
+            Body(Markdown)
           </label>
           <textarea
             ref={bodyRef}

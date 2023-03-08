@@ -51,6 +51,24 @@ function App() {
   function addTag(tag: Tag){
     setTags((prev) => [...prev, tag]);
   }
+
+  function updateTag(id:string,label:string){
+    setTags(prevTags=>{
+      return prevTags.map(tag=>{
+        if(id === tag.id){
+          return {...tag, label}
+        }else{
+          return tag
+        }
+      })
+    })
+  }
+  function deleteTag(id:string){
+    setTags(prevTags=>{
+      return prevTags.filter(tag=>tag.id !== id) 
+      })
+  }
+
   function onUpdateNote(id:string, {tags, ...data}:NoteData){
     setNotes(prevNotes=>{
       return prevNotes.map(note=>{
@@ -68,11 +86,11 @@ function App() {
     })
   }
   return (
-    <div className=" p-4 h-screen flex w-[600px] font-tilt">
+    <div className=" p-4 h-screen m-auto  w-[600px] font-tilt">
       <Routes>
         <Route
           path="/"
-          element={<NoteList availableTags={tags} notes={noteWithTags} />}
+          element={<NoteList availableTags={tags} notes={noteWithTags} deleteTag={deleteTag} updateTag={updateTag} />}
         />
         <Route
           path="/new"
